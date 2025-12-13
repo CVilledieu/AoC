@@ -8,30 +8,38 @@
 // Check for if length % 2 == 0 can be within the range
 // Find invalid ids
 // Sum invalid ids
-#include <stdio.h>
-#include <stdlib.h>
+#include <solution.h>
 
 
-FILE* openFile(){
-    char* fileName = "input.txt";
-    FILE *fp = fopen(fileName, "r");
+FILE* init(){
+    printf("Reading from %s\n", FILE_NAME);
+    FILE *fp = fopen(FILE_NAME, "r");
+
     return fp;
 }
 
+int rangeSize(char* buffer){
+    for (int i = 0; i < RANGE_BUFFER_SIZE; i++){
+        if(buffer[i] == '\0' || buffer[i] == '\n'){
+            return i;
+        }
+    }
+    return -1;
+}
 
 int parseRange(FILE* fp, char* left_buffer, char* right_buffer){
-    return fscanf(fp, "%24[^-]-%24[^,],", left_buffer, right_buffer); 
+    if (fscanf(fp, PARSE_FORMAT, left_buffer, right_buffer) == EOF){
+        return EOF;
+    }
+    int left_size = rangeSize(left_buffer);
+    int right_size = rangeSize(right_buffer);
+    
+    if (left_size == right_size && left_size %2 != 0){
+        return 0;
+    } else {
+        return 1;
+    }
+
 }
 
 
-// int parseRange(FILE* fp, char* left_buffer, char* right_buffer){
-//     int left_range = 0;
-//     int right_range = 0;
-//     int res = fscanf(fp, "%i-%i,", left_range, right_range);
-//     if (res == -1) return -1;
-
-//     sprintf(left_buffer, "%i", left_range);
-//     sprintf(right_buffer, "%i", right_range);
-
-//     return 0;
-// }

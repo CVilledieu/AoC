@@ -1,28 +1,54 @@
-CC = gcc
+#Compiler
+CC := gcc
 
-TARGET = APP
+#Targets
+APP := app
+TEST := test
 
-CFLAGS = -Wall -I./include
+#Dirs
+SRC_DIR := src
+BIN_DIR := bin
+INC := ./include/
 
-#dirs
-SRC_D = src/
-OUT_D = bin/
+#Flags
+CFLAGS := -Wall -I$(INC)
+TEST_CFLAGS := $(CFLAGS) -DTEST_MODE
 
-SRC = solution.c
-PROD = main.c
-TESTS = test.c
+#Universal src
+UNIVERSAL := solution.c
+COMMON_SRC := $(SRC_DIR)/$(UNIVERSAL)
 
-OBJS = $(%.o = %.c)
+#Target based src
+TEST_SRCS := $(SRC_DIR)/test.c $(COMMON_SRC)
+APP_SRCS := $(SRC_DIR)/main.c $(COMMON_SRC)
 
-all: test
+EXE = app
+OUTPUT = $(BIN_DIR)/$(EXE)
 
-build:
+dev: $(TEST) dev_support
+build: $(APP) dev_support
 
-test: 
-	$(CC) $(CFLAGS) src/$(TESTS) -o bin/$(TESTS)
+
+$(TEST): $(TEST_SRCS)
+	$(CC) $(TEST_CFLAGS) $^ -o $(OUTPUT)
+
+$(APP): $(APP_SRCS)
+	$(CC) $(CFLAGS) $^ -o $(OUTPUT)
+
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-clean:
 
-.PHONEY: all clean
+
+dev_support:clean run
+
+run: 
+	@echo "Running..."
+	@echo ""
+	@$(OUTPUT)
+
+clean:
+	rm -f $(SRC_DIR)/*.o
+
+
+.PHONY: all clean support run
